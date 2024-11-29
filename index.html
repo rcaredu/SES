@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Energy Sources Explorer</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+      @import url('https://fonts.cdnfonts.com/css/sf-pro-display');
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'SF Pro Text', 'SF Pro Display', -apple-system, sans-serif;
+      }
+
+      body {
+        background: linear-gradient(135deg, #f6f9fc, #e9f2ff);
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: #2d3436;
+      }
+
+      .container {
+        position: relative;
+        width: 1000px;
+        height: 1000px;
+        padding: 20px;
+      }
+
+      .circle-nav {
+        position: relative;
+        width: 100%;
+        height: 100%;
+      }
+
+      .nav-item {
+        position: absolute;
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-decoration: none;
+        color: #2d3436;
+        font-weight: 500;
+        text-align: center;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        cursor: pointer;
+        padding: 15px;
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+      }
+
+      .nav-item:hover {
+        transform: scale(1.05);
+        box-shadow: 0 8px 32px rgba(31, 38, 135, 0.25);
+      }
+
+      .nav-item i {
+        font-size: 2em;
+        margin-bottom: 10px;
+      }
+
+      .formula {
+        font-size: 0.9em;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        position: absolute;
+        background: rgba(255, 255, 255, 0.95);
+        padding: 15px;
+        border-radius: 12px;
+        width: 220px;
+        pointer-events: none;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        color: #2d3436;
+        font-weight: 400;
+        line-height: 1.4;
+      }
+
+      .nav-item:hover .formula {
+        opacity: 1;
+      }
+
+      .solar {
+        background: linear-gradient(45deg, #ffecd2, #fcb69f);
+        top: 50px;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+
+      .wind {
+        background: linear-gradient(45deg, #a1c4fd, #c2e9fb);
+        top: 30%;
+        right: 50px;
+      }
+
+      .nuclear {
+        background: linear-gradient(45deg, #d4fc79, #96e6a1);
+        bottom: 30%;
+        right: 50px;
+      }
+
+      .hydro {
+        background: linear-gradient(45deg, #84fab0, #8fd3f4);
+        bottom: 50px;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+
+      .geothermal {
+        background: linear-gradient(45deg, #fad0c4, #ffd1ff);
+        bottom: 30%;
+        left: 50px;
+      }
+
+      .fossil {
+        background: linear-gradient(45deg, #a6c0fe, #f68084);
+        top: 30%;
+        left: 50px;
+      }
+
+      .center-circle {
+        position: absolute;
+        width: 400px;
+        height: 400px;
+        background: linear-gradient(135deg, #fff, #f8f9fa);
+        border-radius: 50%;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        color: #2d3436;
+        text-align: center;
+        padding: 40px;
+        box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+      }
+
+      .center-circle h1 {
+        margin-bottom: 25px;
+        font-size: 2.2em;
+        font-weight: 600;
+        background: linear-gradient(45deg, #12c2e9, #c471ed, #f64f59);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .center-circle p {
+        font-size: 1.1em;
+        margin: 15px 0;
+        line-height: 1.4;
+        font-weight: 400;
+        color: #636e72;
+      }
+
+      .efficiency-meter {
+        width: 80%;
+        height: 8px;
+        background: rgba(0,0,0,0.05);
+        border-radius: 20px;
+        margin: 25px 0;
+        overflow: hidden;
+      }
+
+      .efficiency-fill {
+        width: 0%;
+        height: 100%;
+        background: linear-gradient(90deg, #12c2e9, #c471ed, #f64f59);
+        transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      .key-stats {
+        font-size: 1.1em;
+        color: #636e72;
+        line-height: 1.6;
+        margin-top: 20px;
+        font-weight: 400;
+      }
+
+      @keyframes fadeIn {
+        from { opacity: 0; transform: scale(0.95) translate(-50%, -50%); }
+        to { opacity: 1; transform: scale(1) translate(-50%, -50%); }
+      }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="circle-nav">
+        <div class="center-circle">
+            <h1>Energy Sources Explorer</h1>
+            <p>Compare different energy sources and their efficiency</p>
+            <div class="efficiency-meter">
+                <div class="efficiency-fill"></div>
+            </div>
+            <p class="key-stats">
+                Global Energy Consumption<br>
+                10^22 Joules/year<br>
+                Power = Energy / Time
+            </p>
+        </div>
+
+        <a href="#solar" class="nav-item solar">
+            <i class="fas fa-sun"></i>
+            Solar Energy
+            <div class="formula">
+                E = A × r × h × s<br>
+                where:<br>
+                E = Energy output<br>
+                A = Area<br>
+                r = Solar panel efficiency<br>
+                h = Solar hours<br>
+                s = Solar constant
+            </div>
+        </a>
+
+        <a href="#wind" class="nav-item wind">
+            <i class="fas fa-wind"></i>
+            Wind Energy
+            <div class="formula">
+                P = ½ρAv³<br>
+                where:<br>
+                P = Power<br>
+                ρ = Air density<br>
+                A = Swept area<br>
+                v = Wind velocity
+            </div>
+        </a>
+
+        <a href="#nuclear" class="nav-item nuclear">
+            <i class="fas fa-atom"></i>
+            Nuclear Energy
+            <div class="formula">
+                E = mc²<br>
+                Efficiency = (Thot - Tcold) / Thot<br>
+                Average efficiency: 33%
+            </div>
+        </a>
+
+        <a href="#hydro" class="nav-item hydro">
+            <i class="fas fa-water"></i>
+            Hydroelectric
+            <div class="formula">
+                P = ηρQgh<br>
+                where:<br>
+                η = Efficiency<br>
+                ρ = Water density<br>
+                Q = Flow rate<br>
+                h = Height difference
+            </div>
+        </a>
+
+        <a href="#geothermal" class="nav-item geothermal">
+            <i class="fas fa-fire"></i>
+            Geothermal
+            <div class="formula">
+                Q = mcΔT<br>
+                where:<br>
+                Q = Heat energy<br>
+                m = Mass<br>
+                c = Specific heat<br>
+                ΔT = Temperature change
+            </div>
+        </a>
+
+        <a href="#fossil" class="nav-item fossil">
+            <i class="fas fa-fire-flame-curved"></i>
+            Fossil Fuels
+            <div class="formula">
+                Energy Density ≈ 30 MJ/kg<br>
+                CO₂ Output: 1kg Coal → 3kg CO₂
+            </div>
+        </a>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        setTimeout(() => {
+            document.querySelector('.efficiency-fill').style.width = '70%';
+        }, 500);
+    });
+</script>
+</body>
+</html>
